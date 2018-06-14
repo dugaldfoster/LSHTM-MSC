@@ -7,6 +7,6 @@ The title of the project is "The Evolutionary and Ecological Determinants of Age
 
 I'm relatively new to Github so it's a good way to practise my open science skills too!
 
-If you spot any errors or want to chat about the project, please email me at dugaldfoster@gmail.com, or contact me on Twitter @DugaldFoster
+If you spot any errors or want to chat about the project, please email me at dugaldfoster@gmail.com, or contact me on Twitter https://twitter.com/DugaldFoster
 
 Thanks!
