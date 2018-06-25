@@ -185,5 +185,3 @@ twomum$`relationship to HoH` <- factor(twomum$`relationship to HoH`,
 
 #Save twomum as csv file
 #write.csv(twomum, "npir2016.csv")
-
-### LOTTY'S SHOWING ME HOW GITHUB WORKS
