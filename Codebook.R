@@ -28,7 +28,7 @@ b2 	“Year of birth of child”
 b4 	“Sex of child (1 = Male, 2 = Female)”
 b5 	“Whether child was alive at the time of interview (0 = No, 1 = Yes)”
 b7	“Age at death (months)”
-b11   “Preceding birth interval is calculated as the difference in months between the current birth and the previous birth”
+b11    “Preceding birth interval is calculated as the difference in months between the current birth and the previous birth”
 b12 	“Succeeding birth interval is calculated as the difference in months between the current birth and the following birth”
 
 Computed Variables
@@ -37,7 +37,7 @@ tcd 		“Total number of children who have died”
 matage 	“Maternal age at birth x”
 overlap	“Whether the birth was an instance of reproductive overlap (0 = No, 1	= yes)”
 overlap	“Whether the birth was an instance of reproductive overlap between a mother and a daughter (0 = No, 1 = yes)”
-multimum   “Whether the birth occurred in a household with >1 mother (0 = No, 1 = yes)”
+multimum     “Whether the birth occurred in a household with >1 mother (0 = No, 1 = yes)”
 
 For any other variables or codes, please see the DHS recode manuals: https://dhsprogram.com/publications/publication-dhsg4-dhs-questionnaires-and-manuals.cfm
 
