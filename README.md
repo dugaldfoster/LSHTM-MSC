@@ -1,5 +1,4 @@
 # LSHTM-MSC
-Work for my MSc project at LSHTM
 
 This repository includes coding and analysis scripts used in my 2018 MSc project at the London School of Hygiene and Tropical Medcine.
 
