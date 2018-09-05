@@ -23,13 +23,13 @@ v207 	“Total number of daughters who have died”
 v212  “Age of the respondent at first birth”
 v218 	“Total number of living children”
 bidx 	“Birth history index numbers the entries in the birth history from 1 to n, where the nth birth is the first birth.”
-b0 		“Twin code gives an order number for each child of a multiple birth. Code 0 indicates a single birth, code 1-upwards give the number of the child.”
-b2 		“Year of birth of child”
-b4 		“Sex of child (1 = Male, 2 = Female)”
-b5 		“Whether child was alive at the time of interview (0 = No, 1 = Yes)”
-b7		“Age at death (months)”
-b11 		“Preceding birth interval is calculated as the difference in months between the current birth and the previous birth”
-b12 		“Succeeding birth interval is calculated as the difference in months between the current birth and the following birth”
+b0 	“Twin code gives an order number for each child of a multiple birth. Code 0 indicates a single birth, code 1-upwards give the number of the child.”
+b2 	“Year of birth of child”
+b4 	“Sex of child (1 = Male, 2 = Female)”
+b5 	“Whether child was alive at the time of interview (0 = No, 1 = Yes)”
+b7	“Age at death (months)”
+b11 “Preceding birth interval is calculated as the difference in months between the current birth and the previous birth”
+b12 	“Succeeding birth interval is calculated as the difference in months between the current birth and the following birth”
 
 Computed Variables
 
