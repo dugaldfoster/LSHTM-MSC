@@ -54,7 +54,7 @@ downloads <- get_datasets(datasets[grep("NP", datasets$FileName), ])
 npir96 <- readRDS(downloads$NPIR31FL)
 npir01 <- readRDS(downloads$NPIR41FL)
 npir06 <- readRDS(downloads$NPIR51FL)
-npir11 <- readRDS(downloads$NPIR60FL)
+npir11 <- readRDS(downloads$NPIR61FL)
 npir16 <- readRDS(downloads$NPIR7HFL)
 
 ##### 2. Data cleaning and manipulation #####
