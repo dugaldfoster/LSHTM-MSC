@@ -67,7 +67,7 @@ library(plyr)
 allsurvs <- rbind.fill(npir01, npir06, npir11, npir16)
 
 #Select variables to extract from allsurvs
-myvars <- c("caseid", "v000", "v001", "v002", "v003", "v005", "v010", "v012", "v021", "v022", "v023", 
+myvars <- c("caseid", "v000", "v001", "v002", "v003", "v005", "v007", "v010", "v012", "v021", "v022", "v023", 
             "v025",  "v131", "v136", "v138", "v149", "v150", "v201", "v202", "v203", "v206", "v207", 
             "v212", "v218", "v190", "v191",
             "bidx_01", "bidx_02", "bidx_03", "bidx_04","bidx_05", "bidx_06", "bidx_07", "bidx_08", 
@@ -91,32 +91,15 @@ myvars <- c("caseid", "v000", "v001", "v002", "v003", "v005", "v010", "v012", "v
 
 dhsdata <- allsurvs[myvars]
 
-#Check var labels
-(get_var_labels(dhsdata))
+#Check variables
+names(dhsdata)
 
 ### Date Reformatting ###
 #Gregorian calendar year is roughly equivalent to Nepali year - 57
-#Once dates are reformatted to 4 digits, subtract 57 from each value
-dhsdata$b2_01 <- (dhsdata$b2_01)-57
-dhsdata$b2_02 <- (dhsdata$b2_02)-57
-dhsdata$b2_03 <- (dhsdata$b2_03)-57
-dhsdata$b2_04 <- (dhsdata$b2_04)-57
-dhsdata$b2_05 <- (dhsdata$b2_05)-57
-dhsdata$b2_06 <- (dhsdata$b2_06)-57
-dhsdata$b2_07 <- (dhsdata$b2_07)-57
-dhsdata$b2_08 <- (dhsdata$b2_08)-57
-dhsdata$b2_09 <- (dhsdata$b2_09)-57
-dhsdata$b2_10 <- (dhsdata$b2_10)-57
-dhsdata$b2_11 <- (dhsdata$b2_11)-57
-dhsdata$b2_12 <- (dhsdata$b2_12)-57
-dhsdata$b2_13 <- (dhsdata$b2_13)-57
-dhsdata$b2_14 <- (dhsdata$b2_14)-57
-dhsdata$b2_15 <- (dhsdata$b2_15)-57
-dhsdata$b2_16 <- (dhsdata$b2_16)-57
-dhsdata$b2_17 <- (dhsdata$b2_17)-57
-dhsdata$b2_18 <- (dhsdata$b2_18)-57
-dhsdata$b2_19 <- (dhsdata$b2_19)-57
-dhsdata$b2_20 <- (dhsdata$b2_20)-57
+#Once dates are reformatted to 4 digits, subtract 57 from each date column
+dhsdata[,7] <- dhsdata[,7] - 57
+dhsdata[,8] <- dhsdata[,8] - 57
+dhsdata[,68:87] <- dhsdata[,68:87] - 57
 
 ### Create new variables ###
 #Create new variable for total no. children died
@@ -130,7 +113,7 @@ label(dhsdata$tcd) <- "Total children died"
 
 #Reorder vars so tcd comes after son and daughter deaths (v207)
 names(dhsdata)
-dhsdata <- dhsdata[,c(1:22,187,23:186)]
+dhsdata <- dhsdata[,c(1:23,188,24:187)]
 
 #Create new variable for maternal age at birth x
 #Convert respondent birth dates to Gregorian calendar
@@ -161,26 +144,26 @@ dhsdata$"matage_20" <- dhsdata$b2_20 - dhsdata$v010
 #Change labels to "mother's age at birth"
 library(Hmisc)
 describe(dhsdata$matage_01)
-label(dhsdata$matage_01) <- "Mother's age at birth"
-label(dhsdata$matage_02) <- "Mother's age at birth"
-label(dhsdata$matage_03) <- "Mother's age at birth"
-label(dhsdata$matage_04) <- "Mother's age at birth"
-label(dhsdata$matage_05) <- "Mother's age at birth"
-label(dhsdata$matage_06) <- "Mother's age at birth"
-label(dhsdata$matage_07) <- "Mother's age at birth"
-label(dhsdata$matage_08) <- "Mother's age at birth"
-label(dhsdata$matage_09) <- "Mother's age at birth"
-label(dhsdata$matage_10) <- "Mother's age at birth"
-label(dhsdata$matage_11) <- "Mother's age at birth"
-label(dhsdata$matage_12) <- "Mother's age at birth"
-label(dhsdata$matage_13) <- "Mother's age at birth"
-label(dhsdata$matage_14) <- "Mother's age at birth"
-label(dhsdata$matage_15) <- "Mother's age at birth"
-label(dhsdata$matage_16) <- "Mother's age at birth"
-label(dhsdata$matage_17) <- "Mother's age at birth"
-label(dhsdata$matage_18) <- "Mother's age at birth"
-label(dhsdata$matage_19) <- "Mother's age at birth"
-label(dhsdata$matage_20) <- "Mother's age at birth"
+label(dhsdata$matage_01) <- "Mother's age at birth 1"
+label(dhsdata$matage_02) <- "Mother's age at birth 2"
+label(dhsdata$matage_03) <- "Mother's age at birth 3"
+label(dhsdata$matage_04) <- "Mother's age at birth 4"
+label(dhsdata$matage_05) <- "Mother's age at birth 5"
+label(dhsdata$matage_06) <- "Mother's age at birth 6"
+label(dhsdata$matage_07) <- "Mother's age at birth 7"
+label(dhsdata$matage_08) <- "Mother's age at birth 8"
+label(dhsdata$matage_09) <- "Mother's age at birth 9"
+label(dhsdata$matage_10) <- "Mother's age at birth 10"
+label(dhsdata$matage_11) <- "Mother's age at birth 11"
+label(dhsdata$matage_12) <- "Mother's age at birth 12"
+label(dhsdata$matage_13) <- "Mother's age at birth 13"
+label(dhsdata$matage_14) <- "Mother's age at birth 14"
+label(dhsdata$matage_15) <- "Mother's age at birth 15"
+label(dhsdata$matage_16) <- "Mother's age at birth 16"
+label(dhsdata$matage_17) <- "Mother's age at birth 17"
+label(dhsdata$matage_18) <- "Mother's age at birth 18"
+label(dhsdata$matage_19) <- "Mother's age at birth 19"
+label(dhsdata$matage_20) <- "Mother's age at birth 20"
 
 #Check maternal age at birth dates are ok
 describe(dhsdata$matage_01)
@@ -247,7 +230,7 @@ longmums <- reshape(mums, direction = "long",  idvar = c("v000","v001", "v002", 
                                      "matage_06", "matage_07", "matage_08", "matage_09", "matage_10", 
                                      "matage_11", "matage_12", "matage_13", "matage_14", "matage_15", 
                                      "matage_16", "matage_17", "matage_18", "matage_19", "matage_20")),
-                    v.names = c("order", "twin", "yob", "sex", "alive", "agedeath", "pbi", "sbi", "matage"), 
+                    v.names = c("order", "twin", "yob", "sex", "mortality", "agedeath", "pbi", "sbi", "matage"), 
                     timevar = "birth", times = c("bidx_01", "bidx_02", "bidx_03", "bidx_04", "bidx_05", 
                                                  "bidx_06", "bidx_07", "bidx_08", "bidx_09", "bidx_10", 
                                                  "bidx_11", "bidx_12", "bidx_13", "bidx_14", "bidx_15", 
@@ -257,9 +240,7 @@ longmums <- reshape(mums, direction = "long",  idvar = c("v000","v001", "v002", 
 #Drop cases with "NA" in "order" column
 longmums <- longmums[complete.cases(longmums[ , 29]),]
 
-#Rename "alive" column to "mortality", swap 0's and 1's
-names(longmums)
-colnames(longmums)[33] <- "mortality"
+#In mortality variable, swap 0's and 1's
 longmums$mortality <- !longmums$mortality
 longmums$mortality <- as.numeric(longmums$mortality)
 
