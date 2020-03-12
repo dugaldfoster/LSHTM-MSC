@@ -39,14 +39,10 @@ str(datasets)
 irdata <- datasets[grep("BD|IA|NP|PK", datasets$FileName, ignore.case = TRUE), ]
 
 #Download datasets
-#Prior to download, create plain text file in directory called "credentials.txt", showing
-#DHS credentials in following format:
-#email="myemail"
-#password="mypassword"
-#project="projectname"
+#Prior to download, create DHS account with access to required datasets
 
-#set credentials
-set_dhs_credentials(credentials="credentials.txt")
+set_rdhs_config(email = "dugaldwefoster@gmail.com",
+               project = "Nepal Stats")
 
 #Download IR datasets
 downloads <- get_datasets(datasets[grep("NP", datasets$FileName), ])
@@ -320,17 +316,6 @@ longmums$sampleweights <- longmums$v005 / 1000000
 dhsdesign <- svydesign(id= ~v021 + v002, strata = ~v025, weights = ~sampleweights, data = longmums,
                        nest = TRUE)
 
-#Bivariate glm for mortality and overlap
-bimodel <- svyglm(mortality ~ overlap, 
-                  family = quasibinomial(link = logit), dhsdesign)
-
-#View model output
-summary(bimodel)
-
-#Calculate standard odds ratios and 95% CIs
-#exp(coef(model)) for a glm fit with "family = quasibinomial" will give odds ratios
-exp(cbind(OR = coef(bimodel), confint(bimodel)))
-
 #Fit preregistered model
 #(see model defined in preregistration- https://osf.io/5r9fm/register/5771ca429ad5a1020de2872e)
 preregmodel <- svyglm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob, 
@@ -343,11 +328,10 @@ summary(preregmodel)
 exp(cbind(OR = coef(preregmodel), confint(preregmodel)))
 
 #Fit model to provide relative risk ratios
-#exp(coef(model)) for a glm fit with family = quasipoisson will give relative risk ratios
 rrpreregmodel <- svyglm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob, 
                         family = quasipoisson, dhsdesign)
 
-#Realtive risk ratios
+#Relative risk ratios
 exp(cbind(OR = coef(rrpreregmodel), confint(rrpreregmodel)))
 
 ### Exploratory Models ###
@@ -409,7 +393,7 @@ summary(noverlapmodel)
 #Calculate standard odds ratios and 95% CIs
 exp(cbind(OR = coef(noverlapmodel), confint(noverlapmodel)))
 
-##### Fit a logistic regression model with cases limited to mothers and daughters #####
+##### Fit a model with cases limited to mothers and daughters #####
 #Set survey weights
 longmumsdaughts$sampleweights <- longmumsdaughts$v005 / 1000000
 
@@ -434,7 +418,7 @@ rrmdmodel <- svyglm(mortality ~ mdoverlap + sex + matage + twin + pbi + sbi + v1
 #Realtive risk ratios
 exp(cbind(OR = coef(rrmdmodel), confint(rrmdmodel)))
 
-#Best fitting exploratory model applied to mother/daughter data
+#Fit best fitting exploratory model for all data, applied to mother/daughter data
 mdexpmodel3 <- svyglm(mortality ~ mdoverlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + 
                         order + v203 + v138 + v025 + v190, 
                       family = quasibinomial(link = logit), mddesign)
