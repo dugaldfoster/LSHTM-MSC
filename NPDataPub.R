@@ -260,6 +260,9 @@ detach("package:dplyr", unload = TRUE)
 count(longmums$agedeath)
 longmums <- subset(longmums, longmums$agedeath <= 60 | is.na(longmums$agedeath))
 
+#Restrict cases to those born >= 5 years before survey date to account for censoring
+longmums <- subset(longmums, longmums$yob <= longmums$v007 - 5)
+
 ### Add a column to identify cases with reproductive overlap ###
 library(dplyr)
 
@@ -275,19 +278,18 @@ longmums <- longmums %>% mutate(overlap = as.numeric(overlap))
 longmums$twin <- ifelse(longmums$twin > 0, 1, 0)
 
 ### Mothers and Daughters ###
+#Subset only mothers and daughters
+longmumsdaughts <- subset(longmums, v150 == "head" | v150 == "wife" | v150 == "daughter")
 
 #Create column called "mdoverlap" which returns TRUE for cases that were born <=2 years
 #of other cases in the same household, but which had different mothers (who were mothers or daughters)
-longmums <- mutate(group_by(longmums, v000, v001, v002),
+longmumsdaughts <- mutate(group_by(longmumsdaughts, v000, v001, v002),
                    mdoverlap = mapply(function(x,y,z) {any(abs(x-yob)<=2 & y!=v003 & 
                                                              (v150 == "head" | v150 == "wife" | v150=="daughter") & 
                                                              (z == "head" | z == "wife" | z=="daughter"))}, yob, v003, v150))
 
 #Change TRUE/FALSE to 1/0
-longmums <- longmums %>% mutate(mdoverlap = as.numeric(mdoverlap))
-
-#Subset only mothers and daughters
-longmumsdaughts <- subset(longmums, v150 == "head" | v150 == "wife" | v150 == "daughter")
+longmumsdaughts <- longmumsdaughts %>% mutate(mdoverlap = as.numeric(mdoverlap))
 
 #Remove previous overlap column which came from longmums
 names(longmumsdaughts)
