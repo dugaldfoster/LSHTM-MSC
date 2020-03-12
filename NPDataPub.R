@@ -567,9 +567,24 @@ ggplot(data = longmums, mapping = aes(x = status, fill = factor(overlap))) +
 
 #Plot mortality by other vars
 #Create bar plot for mortality prevalence by maternal age at birth
-ggplot(data = longmums, mapping = aes(x = matage, fill = factor(mortality))) +
+ggplot(data = longmums, mapping = aes(x = matage, fill = factor(status))) +
   geom_bar() +
-  scale_fill_discrete(name = "mortality")
+  scale_fill_discrete(name = "status")
+
+#Create bar plot for overlap prevalence by maternal age at birth
+ggplot(data = longmums, mapping = aes(x = matage, fill = factor(overlap))) +
+  geom_bar() +
+  scale_fill_discrete(name = "overlap")
+
+#Create bar plot for mortality prevalence by year of birth
+ggplot(data = longmums, mapping = aes(x = yob, fill = factor(status))) +
+  geom_bar() +
+  scale_fill_discrete(name = "status")
+
+#Create bar plot for overlap prevalence by year of birth
+ggplot(data = longmums, mapping = aes(x = yob, fill = factor(overlap))) +
+  geom_bar() +
+  scale_fill_discrete(name = "overlap")
 
 #Education level
 ggplot(data = longmums, mapping = aes(x = status, fill = factor(v149))) +
