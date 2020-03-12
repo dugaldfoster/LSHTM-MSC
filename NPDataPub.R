@@ -429,6 +429,20 @@ summary(mdexpmodel3)
 #Calculate standard odds ratios and 95% CIs
 exp(cbind(OR = coef(mdexpmodel3), confint(mdexpmodel3)))
 
+#Rerun models to account for nested structure of the data
+library(lme4)
+
+preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
+                           + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
+                           control = glmerControl(optimizer ="Nelder_Mead"))
+
+#Convergence issues... try
+preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
+                           + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
+                           control = glmerControl(optimizer ="Nelder_Mead"))
+
+#See ?convergence for issues with Hessian for large datasets
+
 ### Compare model fits ###
 AIC(preregmodel, noverlapmodel)
 AIC(preregmodel, expmodel1, expmodel2, expmodel3)
