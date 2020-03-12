@@ -270,6 +270,7 @@ longmums <- longmums[
 
 #Remove cases with death over the age of 5 (so we only measure child mortality)
 #NB see grouping in reported age at death (1 year, 2 years, 3 years)
+detach("package:dplyr", unload = TRUE)
 count(longmums$agedeath)
 longmums <- subset(longmums, longmums$agedeath <= 60 | is.na(longmums$agedeath))
 
@@ -283,6 +284,9 @@ longmums <- mutate(group_by(longmums, v000, v001, v002),
 
 #Change TRUE/FALSE to 1/0
 longmums <- longmums %>% mutate(overlap = as.numeric(overlap))
+
+#Edit "twin" variable to reflect whether birth was part of a multiple birth (0 no, 1 yes)
+longmums$twin <- ifelse(longmums$twin > 0, 1, 0)
 
 ### Mothers and Daughters ###
 
@@ -581,6 +585,12 @@ ggplot(data = longmums) +
                    labels=c("No Overlap", "Overlap")) +
   scale_y_continuous(labels = scales::percent_format(), breaks = scales::pretty_breaks(n = 5),
                      limits = c(0,1))
+
+#Create bar plot for mortality prevalence by overlap
+longmums$status <- ifelse(longmums$mortality == 0, "Alive", "Dead")
+ggplot(data = longmums, mapping = aes(x = status, fill = factor(overlap))) +
+  geom_bar() +
+  scale_fill_discrete(name = "Overlap")
 
 #Plot mortality by other vars
 #Education level
