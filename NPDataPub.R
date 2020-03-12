@@ -291,7 +291,7 @@ longmumsdaughts <- subset(longmums, v150 == "head" | v150 == "wife" | v150 == "d
 
 #Remove previous overlap column which came from longmums
 names(longmumsdaughts)
-longmumsdaughts <- subset(longmumsdaughts, select = -c(38))
+longmumsdaughts <- subset(longmumsdaughts, select = -c(39))
 
 #Sort by survey, cluster, household, respline
 longmumsdaughts <- longmumsdaughts[
