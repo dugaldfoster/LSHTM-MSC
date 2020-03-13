@@ -41,8 +41,8 @@ irdata <- datasets[grep("BD|IA|NP|PK", datasets$FileName, ignore.case = TRUE), ]
 #Download datasets
 #Prior to download, create DHS account with access to required datasets
 
-set_rdhs_config(email = "dugaldwefoster@gmail.com",
-               project = "Nepal Stats")
+#set_rdhs_config(email = "MyEMail",
+#               project = "ProjectName")
 
 #Download IR datasets
 downloads <- get_datasets(datasets[grep("NP", datasets$FileName), ])
@@ -193,7 +193,7 @@ mums$v150 <- factor(mums$v150,
 #Rename cluster, household, mother caseid variables
 library(tidyverse)
 
-#Rename caseid to provide unique ID
+#Reformat caseid to provide unique ID
 mums <- mums %>%
   unite(caseid, v000, v001, v002, v003, sep = "_", remove = F)
 
@@ -432,9 +432,12 @@ exp(cbind(OR = coef(mdexpmodel3), confint(mdexpmodel3)))
 #Rerun models to account for nested structure of the data
 library(lme4)
 
-preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
-                           + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
-                           control = glmerControl(optimizer ="Nelder_Mead"))
+preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit))
+
+#remodel to give risk ratios
+rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
+
+plot_coefs(preregmodel_glmer, rrpreregmodel_glmer)
 
 #Convergence issues... try
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
@@ -552,53 +555,104 @@ sexmortratio <- svyratio(
 
 cbind(sexmortratio, confint(sexmortratio))
 
-#Create bar plot for child mortality prevalence
+#PLots
 library(ggplot2)
 library(scales)
-qplot(as.factor(longmums$mortality)) + 
-  geom_bar() + 
-  labs(x="Child Mortality Status", y="Count") +
-  scale_x_discrete(breaks=c("0","1"),
-                   labels=c("Alive", "Dead")) +
-  scale_y_continuous(labels=function(n){format(n, scientific = FALSE)})
+
+#Create new variable showing child status and create bar plot for child mortality prevalence
+longmums$status <- ifelse(longmums$mortality == 0, "Alive", "Dead")
+ggplot(data = longmums, aes(x = status)) + 
+  geom_bar()
 
 #Create bar plot for overlap prevalence
-#NB breaks/labels not working- try hacking x axis name to provde labels
-ggplot(data = longmums) + 
-  geom_bar(mapping = aes(x = overlap, y = ..prop..), stat = "count") +
-  scale_x_discrete(name = "No Overlap               Overlap",
-                   breaks=c("0","1"),
-                   labels=c("No Overlap", "Overlap")) +
-  scale_y_continuous(labels = scales::percent_format(), breaks = scales::pretty_breaks(n = 5),
-                     limits = c(0,1))
+longmums$overlapstat <- ifelse(longmums$overlap == 0, "No Overlap", "Overlap")
+ggplot(data = longmums, aes(x = overlapstat)) + 
+  geom_bar()
 
 #Create bar plot for mortality prevalence by overlap
-longmums$status <- ifelse(longmums$mortality == 0, "Alive", "Dead")
-
-ggplot(data = longmums, mapping = aes(x = status, fill = factor(overlap))) +
+ggplot(data = longmums, mapping = aes(x = status, fill = factor(overlapstat))) +
   geom_bar() +
   scale_fill_discrete(name = "Overlap")
-
-#Plot mortality by other vars
-#Create bar plot for mortality prevalence by maternal age at birth
-ggplot(data = longmums, mapping = aes(x = matage, fill = factor(status))) +
-  geom_bar() +
-  scale_fill_discrete(name = "status")
 
 #Create bar plot for overlap prevalence by maternal age at birth
 ggplot(data = longmums, mapping = aes(x = matage, fill = factor(overlap))) +
   geom_bar() +
   scale_fill_discrete(name = "overlap")
 
+#Create bar plot for overlap prevalence by year of birth
+ggplot(data = longmums, mapping = aes(x = yob, fill = factor(overlap))) +
+  geom_bar() +
+  scale_fill_discrete(name = "overlap")
+
+#Create bar plot for mortality prevalence by maternal age at birth
+ggplot(data = longmums, mapping = aes(x = matage, fill = factor(status))) +
+  geom_bar() +
+  scale_fill_discrete(name = "status")
+
 #Create bar plot for mortality prevalence by year of birth
 ggplot(data = longmums, mapping = aes(x = yob, fill = factor(status))) +
   geom_bar() +
   scale_fill_discrete(name = "status")
 
-#Create bar plot for overlap prevalence by year of birth
-ggplot(data = longmums, mapping = aes(x = yob, fill = factor(overlap))) +
+#Plot prevalance of overlap for mothers under 30
+longmums %>%
+  filter(matage < 30) %>%
+  ggplot(aes(x = matage, fill = factor(overlap))) +
   geom_bar() +
   scale_fill_discrete(name = "overlap")
+
+#Plot mortality outcomes based on maternal age for births prior to 1990
+longmums %>%
+  filter(yob < 1990) %>%
+  ggplot(aes(x = matage, fill = factor(status))) +
+  geom_bar() +
+  scale_fill_discrete(name = "status")
+
+#Plot mortality outcomes for overlap births per maternal age at birth
+longmums %>%
+  filter(overlap > 0) %>%
+  ggplot(aes(x = matage, fill = factor(status))) +
+  geom_bar() +
+  scale_fill_discrete(name = "mortality")
+
+#Plot mortality outcomes for non-overlap births per year
+longmums %>%
+  filter(overlap == 1) %>%
+  ggplot(aes(x = v007, fill = factor(status))) +
+  geom_bar() +
+  scale_fill_discrete(name = "mortality")
+
+#Plot change in mean household size over time (year of survey)
+#NB use mums dataframe to avoid repeat counts of hhold size
+ggplot(mums, aes(v007, v136)) +
+  stat_summary(fun.y=mean, geom="smooth") +
+  theme_bw()
+
+#tabulate mean household size across years
+tapply(mums$v136, list(mums$v007),mean)
+
+#Plot change in proportion of overlap over time
+ggplot(longmums, aes(v007, overlap)) +
+  stat_summary(fun.y=mean, geom="bar") + 
+  ylab("Proportion of Births Experiencing Overlap")
+
+#Plot change in proportion of overlap over time with mortality outcome
+ggplot(longmums, aes(yob, overlap, fill = factor(status))) +
+  stat_summary(fun.y=mean, geom="bar") + 
+  ylab("Proportion of Births Experiencing Overlap")
+
+#Plot frequency of ages of death for those who died
+longmums %>%
+  filter(mortality == 1) %>%
+  ggplot(aes(x = agedeath)) +
+  geom_bar()
+
+#Repeat but for deaths at above age 0 months
+longmums %>%
+  filter(mortality == 1) %>%
+  filter(agedeath > 0) %>%
+  ggplot(aes(x = agedeath)) +
+  geom_bar()
 
 #Education level
 ggplot(data = longmums, mapping = aes(x = status, fill = factor(v149))) +
