@@ -466,7 +466,11 @@ onelevel_glm <- glm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136
 #remodel to give risk ratios
 rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
 
-plot_coefs(preregmodel_glmer, rrpreregmodel_glmer, exp = T)
+#Plot odds ratios
+plot_coefs(preregmodel_glmer, exp = T)
+
+#PLot risk ratios
+plot_coefs(rrpreregmodel_glmer, exp = T)
 
 #Convergence issues... try
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
