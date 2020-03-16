@@ -429,15 +429,44 @@ summary(mdexpmodel3)
 #Calculate standard odds ratios and 95% CIs
 exp(cbind(OR = coef(mdexpmodel3), confint(mdexpmodel3)))
 
-#Rerun models to account for nested structure of the data
+### Rerun models to account for nested structure of the data ###
 library(lme4)
 
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit))
 
+#View model output
+summary(preregmodel_glmer)
+
+#Check if convergence warning is likely false positive
+allFit(preregmodel_glmer, verbose = F)
+#all optimizers converge to values that are practically equivalent, so should be safe to consider the convergence warnings to be false positives (as rec'd in ?convergences)
+
+#Calculate standard errors
+se <- sqrt(diag(vcov(preregmodel_glmer)))
+
+# table of estimates with 95% CI
+(tab <- cbind(Est = fixef(preregmodel_glmer), LL = fixef(preregmodel_glmer) - 1.96 * se, UL = fixef(preregmodel_glmer) + 1.96 * se))
+
+exp(tab)
+
+###
+exp(cbind(OR = coef(preregmodel_glmer), confint(preregmodel_glmer)))
+
+#Fit null model without overlap variable
+nullmodel_glmer <- glmer(mortality ~ sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit))
+
+#Fit model without random effects
+onelevel_glm <- glm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob, data = longmums, family = binomial(link = logit))
+
+#Compare model fit
+-2*(logLik(nullmodel_glmer) - logLik(preregmodel_glmer))
+
+-2*(logLik(onelevel_glm) - logLik(preregmodel_glmer))
+
 #remodel to give risk ratios
 rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
 
-plot_coefs(preregmodel_glmer, rrpreregmodel_glmer)
+plot_coefs(preregmodel_glmer, rrpreregmodel_glmer, exp = T)
 
 #Convergence issues... try
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
