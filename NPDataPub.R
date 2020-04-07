@@ -1,6 +1,7 @@
 ####################################################################################################
 #
-# R code to reproduce data download, cleaning and analysis for Nepal DHS data for Foster et al. 2020
+# R code to reproduce data download, cleaning and analysis for Nepal DHS data 
+# for Foster et al. 2020
 #
 # Written by Dugald Foster
 # email: dugaldwefoster@gmail.com
@@ -12,6 +13,10 @@
 # 3. Select cases for analysis
 # 4. Analysis
 #
+# NB to access the data used in this study, you will need to first register 
+# with the DHS and gain access to all country datasets for 
+# Bangladesh, India, Nepal and Pakistan
+# Register here https://dhsprogram.com/data/new-user-registration.cfm
 ####################################################################################################
 
 #Set working directory
@@ -40,7 +45,7 @@ irdata <- datasets[grep("BD|IA|NP|PK", datasets$FileName, ignore.case = TRUE), ]
 
 #Download datasets
 #Prior to download, create DHS account with access to required datasets
-
+#Then run the following code to set your credentials for the rdhs package:
 #set_rdhs_config(email = "MyEMail",
 #               project = "ProjectName")
 
@@ -429,7 +434,7 @@ summary(mdexpmodel3)
 #Calculate standard odds ratios and 95% CIs
 exp(cbind(OR = coef(mdexpmodel3), confint(mdexpmodel3)))
 
-### Rerun models to account for nested structure of the data ###
+##### Rerun models to account for nested structure of the data #####
 library(lme4)
 
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit))
@@ -444,7 +449,7 @@ allFit(preregmodel_glmer, verbose = F)
 #Calculate standard errors
 se <- sqrt(diag(vcov(preregmodel_glmer)))
 
-# table of estimates with 95% CI
+#Produce table of estimates with 95% CI
 (tab <- cbind(Est = fixef(preregmodel_glmer), LL = fixef(preregmodel_glmer) - 1.96 * se, UL = fixef(preregmodel_glmer) + 1.96 * se))
 
 exp(tab)
@@ -463,19 +468,26 @@ onelevel_glm <- glm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136
 
 -2*(logLik(onelevel_glm) - logLik(preregmodel_glmer))
 
+anova(nullmodel_glmer, preregmodel_glmer)
+
 #remodel to give risk ratios
 rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
 
+#Produce table of estimates with 95% CI
+(tab <- cbind(Est = fixef(rrpreregmodel_glmer), LL = fixef(rrpreregmodel_glmer) - 1.96 * se, UL = fixef(rrpreregmodel_glmer) + 1.96 * se))
+
+exp(tab)
+
 #Plot odds ratios
+library(jtools)
 plot_coefs(preregmodel_glmer, exp = T)
 
-#PLot risk ratios
+#Plot risk ratios
 plot_coefs(rrpreregmodel_glmer, exp = T)
 
 #Convergence issues... try
-preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob
-                           + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
-                           control = glmerControl(optimizer ="Nelder_Mead"))
+#preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 #+ v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
+#                           control = glmerControl(optimizer ="Nelder_Mead"))
 
 #See ?convergence for issues with Hessian for large datasets
 
