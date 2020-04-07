@@ -454,7 +454,7 @@ se <- sqrt(diag(vcov(preregmodel_glmer)))
 
 exp(tab)
 
-###
+# Relatiev risk ratios
 exp(cbind(OR = coef(preregmodel_glmer), confint(preregmodel_glmer)))
 
 #Fit null model without overlap variable
@@ -473,17 +473,15 @@ anova(nullmodel_glmer, preregmodel_glmer)
 #remodel to give risk ratios
 rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
 
-#Produce table of estimates with 95% CI
-(tab <- cbind(Est = fixef(rrpreregmodel_glmer), LL = fixef(rrpreregmodel_glmer) - 1.96 * se, UL = fixef(rrpreregmodel_glmer) + 1.96 * se))
-
-exp(tab)
-
 #Plot odds ratios
 library(jtools)
 plot_coefs(preregmodel_glmer, exp = T)
 
 #Plot risk ratios
 plot_coefs(rrpreregmodel_glmer, exp = T)
+
+#Compare svyglm and glmer models
+plot_coefs(rrpreregmodel, rrpreregmodel_glmer, exp = T, model.names = c("svyglm", "glmer"), coefs = c("overlap" = "mdoverlap", "overlap" = "overlap",  "sex" = "sex", "maternal age" = "matage", "twin" = "twin", "pbi" = "pbi", "sbi" = "sbi", "household size" = "v136", "maternal education" = "v149", "birth year" = "yob"))
 
 #Convergence issues... try
 #preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 #+ v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
