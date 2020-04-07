@@ -381,8 +381,7 @@ exp(cbind(OR = coef(expmodel3), confint(expmodel3)))
 
 #Fit model to provide relative risk ratios for expmodel3
 #exp(coef(model)) for a glm fit with family = quasipoisson will give relative risk ratios
-rrexpmodel3 <- svyglm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + 
-                        order + v203 + v138 + v025 + v190, 
+rrexpmodel3 <- svyglm(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + order + v203 + v138 + v025 + v190, 
                       family = quasipoisson, dhsdesign)
 
 #Realtive risk ratios
@@ -454,7 +453,7 @@ se <- sqrt(diag(vcov(preregmodel_glmer)))
 
 exp(tab)
 
-# Relatiev risk ratios
+# Relative risk ratios
 exp(cbind(OR = coef(preregmodel_glmer), confint(preregmodel_glmer)))
 
 #Fit null model without overlap variable
@@ -482,6 +481,9 @@ plot_coefs(rrpreregmodel_glmer, exp = T)
 
 #Compare svyglm and glmer models
 plot_coefs(rrpreregmodel, rrpreregmodel_glmer, exp = T, model.names = c("svyglm", "glmer"), coefs = c("overlap" = "mdoverlap", "overlap" = "overlap",  "sex" = "sex", "maternal age" = "matage", "twin" = "twin", "pbi" = "pbi", "sbi" = "sbi", "household size" = "v136", "maternal education" = "v149", "birth year" = "yob"))
+
+#Compare multilevel and single level glmer models
+plot_coefs(onelevel_glm, rrpreregmodel_glmer, exp = T, model.names = c("SingleLevel", "Multilevel"), coefs = c("overlap" = "mdoverlap", "overlap" = "overlap",  "sex" = "sex", "maternal age" = "matage", "twin" = "twin", "pbi" = "pbi", "sbi" = "sbi", "household size" = "v136", "maternal education" = "v149", "birth year" = "yob"))
 
 #Convergence issues... try
 #preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 #+ v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit), 
