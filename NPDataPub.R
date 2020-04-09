@@ -278,6 +278,15 @@ longmums <- longmums %>% mutate(overlap = as.numeric(overlap))
 #Edit "twin" variable to reflect whether birth was part of a multiple birth (0 no, 1 yes)
 longmums$twin <- ifelse(longmums$twin > 0, 1, 0)
 
+#Create dataframe with cases restricted to those born <= 8 years before survey date to minimise risk of changes in household composition since survey
+longmums8yr <- subset(longmums, longmums$yob >= longmums$v007 - 8)
+
+#Check that all births from 2001 survey are between 1993 and 1996
+longmums2001 <- subset(longmums8yr, longmums8yr$v007 == 2001)
+detach("package:dplyr", unload = TRUE)
+count(longmums2001$yob)
+rm(longmums2001)
+
 ### Mothers and Daughters ###
 #Subset only mothers and daughters
 longmumsdaughts <- subset(longmums, v150 == "head" | v150 == "wife" | v150 == "daughter")
@@ -436,6 +445,7 @@ exp(cbind(OR = coef(mdexpmodel3), confint(mdexpmodel3)))
 ##### Rerun models to account for nested structure of the data #####
 library(lme4)
 
+#Fit pre-registered model
 preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = binomial(link = logit))
 
 #View model output
@@ -479,6 +489,12 @@ rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + s
 
 #Create html table for model summary
 tab_model(rrpreregmodel_glmer)
+
+#make sure variables are being read as categorical
+rrpreregmodel_glmerCHK <- glmer(mortality ~ as.factor(overlap) + as.factor(sex) + matage + as.factor(twin) + pbi + sbi + v136 + as.factor(v149) + yob + (1 | v002/caseid), data = longmums, family = poisson)
+
+#Create html table for model summary
+tab_model(rrpreregmodel_glmerCHK)
 
 #Plot odds ratios
 library(jtools)
