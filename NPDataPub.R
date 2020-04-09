@@ -441,6 +441,11 @@ preregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi
 #View model output
 summary(preregmodel_glmer)
 
+#Create html table for model summary
+#install.packages("sjPlot")
+library("sjPlot")
+tab_model(preregmodel_glmer)
+
 #Check if convergence warning is likely false positive
 allFit(preregmodel_glmer, verbose = F)
 #all optimizers converge to values that are practically equivalent, so should be safe to consider the convergence warnings to be false positives (as rec'd in ?convergences)
@@ -471,6 +476,9 @@ anova(nullmodel_glmer, preregmodel_glmer)
 
 #remodel to give risk ratios
 rrpreregmodel_glmer <- glmer(mortality ~ overlap + sex + matage + twin + pbi + sbi + v136 + v149 + yob + (1 | v002/caseid), data = longmums, family = poisson)
+
+#Create html table for model summary
+tab_model(rrpreregmodel_glmer)
 
 #Plot odds ratios
 library(jtools)
