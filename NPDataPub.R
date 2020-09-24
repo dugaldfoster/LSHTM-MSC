@@ -202,6 +202,10 @@ library(tidyverse)
 mums <- mums %>%
   unite(caseid, v000, v001, v002, v003, sep = "_", remove = F)
 
+#Reformat household v002 to provide unique ID
+mums <- mums %>%
+  unite(v002, v000, v001, v002, sep = "_", remove = F)
+
 ### Reshape data from wide to long format ###
 library(reshape2)
 
@@ -289,6 +293,7 @@ rm(longmums2001)
 
 ### Mothers and Daughters ###
 #Subset only mothers and daughters
+library(dplyr)
 longmumsdaughts <- subset(longmums, v150 == "head" | v150 == "wife" | v150 == "daughter")
 
 #Create column called "mdoverlap" which returns TRUE for cases that were born <=2 years
